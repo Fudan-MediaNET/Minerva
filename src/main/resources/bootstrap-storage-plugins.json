@@ -1,18 +1,45 @@
 {
+<<<<<<< HEAD
   "storage":{
     "ipfs" : {
       "type":"ipfs",
       "host": "127.0.0.1",
       "port": 5001,
       "max-nodes-per-leaf": 3,
+=======
+  "storage": {
+    "ipfs": {
+      "type": "ipfs",
+      "host": "127.0.0.1",
+      "port": 5001,
+      "max-nodes-per-leaf": 3,
+      "distributed-mode": false,
+      "modified-Merkle-tree": true,
+>>>>>>> a989ec4 ('FMT')
       "ipfs-timeouts": {
         "find-provider": 4,
         "find-peer-info": 4,
         "fetch-data": 5
       },
+<<<<<<< HEAD
       "groupscan-worker-threads": 50,
       "formats": null,
       "enabled": true
+=======
+      "ipfs-caches": {
+        "peer": {
+          "size": 100,
+          "ttl": 600
+        },
+        "provider": {
+          "size": 1000,
+          "ttl": 600
+        }
+      },
+      "groupscan-worker-threads": 50,
+      "formats": null,
+      "enabled": false
+>>>>>>> a989ec4 ('FMT')
     }
   }
 }

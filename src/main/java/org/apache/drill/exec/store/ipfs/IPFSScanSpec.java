@@ -1,3 +1,25 @@
+<<<<<<< HEAD
+=======
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+>>>>>>> a989ec4 ('FMT')
 package org.apache.drill.exec.store.ipfs;
 
 
@@ -6,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+<<<<<<< HEAD
 import org.apache.drill.shaded.guava.com.google.common.collect.ImmutableSet;
 import org.apache.drill.shaded.guava.com.google.common.collect.ImmutableList;
 import io.ipfs.multihash.Multihash;
@@ -17,15 +40,33 @@ import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Map;
+=======
+import io.ipfs.multihash.Multihash;
+import org.apache.drill.common.PlanStringBuilder;
+import org.apache.drill.common.exceptions.UserException;
+import org.apache.drill.exec.store.StoragePluginRegistry;
+import org.apache.drill.shaded.guava.com.google.common.collect.ImmutableSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.security.InvalidParameterException;
+>>>>>>> a989ec4 ('FMT')
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+<<<<<<< HEAD
 import static org.apache.drill.exec.store.ipfs.IPFSStoragePluginConfig.IPFSTimeOut.FIND_PEER_INFO;
 
 @JsonTypeName("IPFSScanSpec")
 public class IPFSScanSpec {
   static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IPFSScanSpec.class);
+=======
+
+@JsonTypeName("IPFSScanSpec")
+public class IPFSScanSpec {
+  private static final Logger logger = LoggerFactory.getLogger(IPFSScanSpec.class);
+>>>>>>> a989ec4 ('FMT')
 
   public enum Prefix {
     @JsonProperty("ipfs")
@@ -34,7 +75,12 @@ public class IPFSScanSpec {
     IPNS("ipns");
 
     @JsonProperty("prefix")
+<<<<<<< HEAD
     private String name;
+=======
+    private final String name;
+
+>>>>>>> a989ec4 ('FMT')
     Prefix(String prefix) {
       this.name = prefix;
     }
@@ -47,7 +93,11 @@ public class IPFSScanSpec {
     @JsonCreator
     public static Prefix of(String what) {
       switch (what) {
+<<<<<<< HEAD
         case "ipfs" :
+=======
+        case "ipfs":
+>>>>>>> a989ec4 ('FMT')
           return IPFS;
         case "ipns":
           return IPNS;
@@ -64,7 +114,12 @@ public class IPFSScanSpec {
     CSV("csv");
 
     @JsonProperty("format")
+<<<<<<< HEAD
     private String name;
+=======
+    private final String name;
+
+>>>>>>> a989ec4 ('FMT')
     Format(String prefix) {
       this.name = prefix;
     }
@@ -77,7 +132,11 @@ public class IPFSScanSpec {
     @JsonCreator
     public static Format of(String what) {
       switch (what) {
+<<<<<<< HEAD
         case "json" :
+=======
+        case "json":
+>>>>>>> a989ec4 ('FMT')
           return JSON;
         case "csv":
           return CSV;
@@ -91,6 +150,7 @@ public class IPFSScanSpec {
   private Prefix prefix;
   private String path;
   private Format formatExtension;
+<<<<<<< HEAD
   private IPFSContext ipfsContext;
 
   @JsonCreator
@@ -100,17 +160,33 @@ public class IPFSScanSpec {
                        @JsonProperty("format") Format format,
                        @JsonProperty("path") String path) throws ExecutionSetupException {
     this.ipfsContext = ((IPFSStoragePlugin) registry.getPlugin(ipfsStoragePluginConfig)).getIPFSContext();
+=======
+  private final IPFSContext ipfsContext;
+
+  @JsonCreator
+  public IPFSScanSpec(@JacksonInject StoragePluginRegistry registry,
+                      @JsonProperty("IPFSStoragePluginConfig") IPFSStoragePluginConfig ipfsStoragePluginConfig,
+                      @JsonProperty("prefix") Prefix prefix,
+                      @JsonProperty("format") Format format,
+                      @JsonProperty("path") String path) {
+    this.ipfsContext = registry.resolve(ipfsStoragePluginConfig, IPFSStoragePlugin.class).getIPFSContext();
+>>>>>>> a989ec4 ('FMT')
     this.prefix = prefix;
     this.formatExtension = format;
     this.path = path;
   }
 
+<<<<<<< HEAD
   public IPFSScanSpec (IPFSContext ipfsContext, String path) {
+=======
+  public IPFSScanSpec(IPFSContext ipfsContext, String path) {
+>>>>>>> a989ec4 ('FMT')
     this.ipfsContext = ipfsContext;
     parsePath(path);
   }
 
   private void parsePath(String path) {
+<<<<<<< HEAD
     //FIXME: IPFS hashes are actually Base58 encoded, so "0" "O" "I" "l" are not valid
     //also CIDs can be encoded with different encodings, not necessarily Base58
     Pattern tableNamePattern = Pattern.compile("^/(ipfs|ipns)/([A-Za-z0-9]{46}(/[^#]+)*)(?:#(\\w+))?$");
@@ -142,10 +218,55 @@ public class IPFSScanSpec {
           logger.debug("failed to extract format from path: {}", hashPath);
           throw UserException.validationError().message("File format is missing and cannot be extracted from query: %s. Please specify file format explicitly by appending `#csv` or `#json`, etc, to the IPFS path.", hashPath).build(logger);
         }
+=======
+    // IPFS CIDs can be encoded in various bases, see https://github.com/multiformats/multibase/blob/master/multibase.csv
+    // Base64-encoded CIDs should not be present in a path since it can contain the '/' character.
+    // [a-zA-Z0-9] should be enough to cover the other bases.
+    Pattern tableNamePattern = Pattern.compile("^/(ipfs|ipns)/([a-zA-Z0-9]+(/[^#]+)*)(?:#(\\w+))?$");
+    Matcher matcher = tableNamePattern.matcher(path);
+    if (!matcher.matches()) {
+      throw UserException
+          .validationError()
+          .message("Invalid IPFS path in query string. Use paths of pattern " +
+              "`/scheme/hashpath#format`, where scheme:= \"ipfs\"|\"ipns\", " +
+              "hashpath:= HASH [\"/\" path], HASH is IPFS Base58 encoded hash, " +
+              "path:= TEXT [\"/\" path], format:= \"json\"|\"csv\"")
+          .build(logger);
+    }
+
+    String prefix = matcher.group(1);
+    String hashPath = matcher.group(2);
+    String formatExtension = matcher.group(4);
+    if (formatExtension == null) {
+      formatExtension = "_FORMAT_OMITTED_";
+    }
+
+    logger.debug("prefix {}, hashPath {}, format {}", prefix, hashPath, formatExtension);
+
+    this.path = hashPath;
+    this.prefix = Prefix.of(prefix);
+    try {
+      this.formatExtension = Format.of(formatExtension);
+    } catch (InvalidParameterException e) {
+      //if format is omitted or not valid, try resolve it from file extension in the path
+      Pattern fileExtensionPattern = Pattern.compile("^.*\\.(\\w+)$");
+      Matcher fileExtensionMatcher = fileExtensionPattern.matcher(hashPath);
+      if (fileExtensionMatcher.matches()) {
+        this.formatExtension = Format.of(fileExtensionMatcher.group(1));
+        logger.debug("extracted format from query: {}", this.formatExtension);
+      } else {
+        logger.debug("failed to extract format from path: {}", hashPath);
+        throw UserException
+            .validationError()
+            .message("File format is missing and cannot be extracted from query: %s. " +
+                "Please specify file format explicitly by appending `#csv` or `#json`, etc, to the IPFS path.", hashPath)
+            .build(logger);
+>>>>>>> a989ec4 ('FMT')
       }
     }
   }
 
+<<<<<<< HEAD
   @JsonProperty
   public Multihash getTargetHash(IPFSHelper helper) {
     try {
@@ -166,6 +287,28 @@ public class IPFSScanSpec {
       return topHash;
     } catch (IOException e) {
       throw UserException.executionError(e).message("Unable to resolve IPFS path; is it a valid IPFS path?").build(logger);
+=======
+  /**
+   * Resolve target hash from IPFS/IPNS paths.
+   * e.g. /ipfs/hash/path/file will be resolved to /ipfs/file_hash
+   *
+   * @param helper IPFS helper
+   * @return the resolved target hash
+   */
+  @JsonProperty
+  public Multihash getTargetHash(IPFSHelper helper) {
+    try {
+      Multihash topHash = helper.resolve(prefix.toString(), path, true);
+      if (topHash == null) {
+        throw UserException.validationError().message("Non-existent IPFS path: %s", toString()).build(logger);
+      }
+      return topHash;
+    } catch (Exception e) {
+      throw UserException
+          .executionError(e)
+          .message("Unable to resolve IPFS path; is it a valid IPFS path?")
+          .build(logger);
+>>>>>>> a989ec4 ('FMT')
     }
   }
 
@@ -175,6 +318,14 @@ public class IPFSScanSpec {
   }
 
   @JsonProperty
+<<<<<<< HEAD
+=======
+  public String getPath() {
+    return path;
+  }
+
+  @JsonProperty
+>>>>>>> a989ec4 ('FMT')
   public Format getFormatExtension() {
     return formatExtension;
   }
@@ -191,6 +342,14 @@ public class IPFSScanSpec {
 
   @Override
   public String toString() {
+<<<<<<< HEAD
     return "IPFSScanSpec [/" + prefix + "/" + path + "#" + formatExtension + " ]";
+=======
+    return new PlanStringBuilder(this)
+        .field("prefix", prefix)
+        .field("path", path)
+        .field("format", formatExtension)
+        .toString();
+>>>>>>> a989ec4 ('FMT')
   }
 }
