@@ -1,10 +1,8 @@
-<<<<<<< HEAD
 # Drill Storage Plugin for IPFS
 
 [中文](README.zh.md)
 =======
 # Drill Storage Plugin for IPFS (Minerva)
->>>>>>> a989ec4 ('FMT')
 
 ## Contents
 
